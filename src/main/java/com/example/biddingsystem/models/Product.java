@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Data
@@ -34,11 +34,15 @@ public class Product {
     private Condition condition;
     private Long minimumBid;
     private Long currentBid;
-    private boolean isBiddingClosed;
+    private boolean isBiddingClosed = false;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "winning_bidder_id")
+    private UserEntity winningBidder;
 
     @Column(length = 1024)
     private String productImageUrl;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private Set<Bid> bidList;
+    private List<Bid> bidList;
 }

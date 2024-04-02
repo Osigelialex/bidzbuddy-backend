@@ -24,7 +24,7 @@ public class Bid {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Product product;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bidder_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private UserEntity bidder;
