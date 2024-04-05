@@ -2,11 +2,11 @@ package com.example.biddingsystem.security.impl;
 
 import com.example.biddingsystem.models.UserEntity;
 import com.example.biddingsystem.security.JwtService;
-import com.example.biddingsystem.security.SecurityConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +16,9 @@ import java.util.function.Function;
 
 @Service
 public class JwtServiceImpl implements JwtService {
+
+    @Value("${jwt.secret}")
+    private String SECRET;
 
     @Override
     public String generateToken(UserEntity userEntity) {
@@ -45,7 +48,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public SecretKey getSignInKey() {
-        String SECRET = SecurityConstants.SECRET;
         byte[] keyBytes = Decoders.BASE64.decode(SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
     }
