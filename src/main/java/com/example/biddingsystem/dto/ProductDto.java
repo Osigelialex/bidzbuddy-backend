@@ -14,5 +14,6 @@ public class ProductDto {
     private Long categoryId;
     private String condition;
     private Long minimumBid;
+    private Long currentBid;
     private String productImageUrl;
 }

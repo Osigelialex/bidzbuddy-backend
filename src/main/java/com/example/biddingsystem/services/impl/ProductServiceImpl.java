@@ -8,10 +8,13 @@ import com.example.biddingsystem.exceptions.MediaUploadException;
 import com.example.biddingsystem.exceptions.ResourceNotFoundException;
 import com.example.biddingsystem.exceptions.ValidationException;
 import com.example.biddingsystem.models.Category;
+import com.example.biddingsystem.models.Notification;
 import com.example.biddingsystem.models.Product;
 import com.example.biddingsystem.models.UserEntity;
 import com.example.biddingsystem.repositories.CategoryRepository;
 import com.example.biddingsystem.repositories.ProductRepository;
+import com.example.biddingsystem.repositories.UserRepository;
+import com.example.biddingsystem.services.NotificationService;
 import com.example.biddingsystem.services.ProductService;
 import com.example.biddingsystem.utils.SecurityUtils;
 import jakarta.transaction.Transactional;
@@ -33,7 +36,8 @@ public class ProductServiceImpl implements ProductService {
     private final FileUploadServiceImpl fileUploadService;
     private final CategoryRepository categoryRepository;
     private final SecurityUtils securityUtils;
-
+    private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     @Override
     public List<ProductDto> getAllProducts(Long categoryId, String condition, Double minimumBid) {
@@ -99,14 +103,22 @@ public class ProductServiceImpl implements ProductService {
             throw new MediaUploadException("An error occurred while uploading image");
         }
 
+        UserEntity currentUser = securityUtils.getCurrentUser();
+
         Product newProduct = new Product();
-        newProduct.setSeller(securityUtils.getCurrentUser());
+        newProduct.setSeller(currentUser);
         newProduct.setName(product.getName());
         newProduct.setDescription(product.getDescription());
         newProduct.setCondition(Condition.valueOf(product.getCondition()));
         newProduct.setMinimumBid(product.getMinimumBid());
         newProduct.setCategory(category.get());
         newProduct.setProductImageUrl(uploadedImageUrl);
+
+        // notify current user that product has been created
+        notificationService.sendNotification(
+                "Product with name " + newProduct.getName() + " created successfully",
+                currentUser.getId()
+        );
 
         return modelMapper.map(productRepository.save(newProduct), ProductDto.class);
     }
@@ -119,6 +131,12 @@ public class ProductServiceImpl implements ProductService {
         }
         Product product = productOptional.get();
         productRepository.delete(product);
+
+        // notify current user that product has been deleted
+        notificationService.sendNotification(
+                "Product with name " + product.getName() + " deleted successfully",
+                product.getSeller().getId()
+        );
     }
 
     @Override

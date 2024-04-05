@@ -10,6 +10,7 @@ import com.example.biddingsystem.models.UserEntity;
 import com.example.biddingsystem.repositories.BiddingRepository;
 import com.example.biddingsystem.repositories.ProductRepository;
 import com.example.biddingsystem.services.BiddingService;
+import com.example.biddingsystem.services.NotificationService;
 import com.example.biddingsystem.utils.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class BiddingServiceImpl implements BiddingService {
     private final ProductRepository productRepository;
     private final SecurityUtils securityUtils;
     private final ModelMapper modelMapper;
+    private final NotificationService notificationService;
 
     @Override
     public void placeBid(Long productId, BidDto bidDto) {
@@ -43,12 +45,13 @@ public class BiddingServiceImpl implements BiddingService {
             throw new ValidationException("Bidding is closed for this product");
         }
 
+        // the first user to bid on a product can bid the minimum amount otherwise it is not allowed
         if (bidDto.getBidAmount().equals(product.getMinimumBid()) &&
                 !product.getMinimumBid().equals(product.getCurrentBid())) {
-            throw new ValidationException("Bid amount must be at least " + product.getCurrentBid());
+            throw new ValidationException("Bid amount must be greater than " + product.getCurrentBid());
         }
 
-        if (bidDto.getBidAmount() < product.getCurrentBid()) {
+        if (bidDto.getBidAmount() <= product.getCurrentBid()) {
             throw new ValidationException("Bid amount must be greater than " + product.getCurrentBid());
         }
 
@@ -60,6 +63,14 @@ public class BiddingServiceImpl implements BiddingService {
         bid.setProduct(product);
         bid.setBidAmount(bidDto.getBidAmount());
         biddingRepository.save(bid);
+
+        // notify previous highest bidder that they have been outbid
+        List<Bid> previousBids = biddingRepository.findBidsByProductIdOrderByBidAmountDesc(productId);
+        if (previousBids.size() > 1) {
+            Bid previousBid = previousBids.get(1);
+            UserEntity previousBidder = previousBid.getBidder();
+            notificationService.sendNotification("You have been outbid on " + product.getName(), previousBidder.getId());
+        }
     }
 
     @Override
@@ -78,7 +89,7 @@ public class BiddingServiceImpl implements BiddingService {
             throw new ResourceNotFoundException("Product not found");
         }
 
-        Bid winningBid = biddingRepository.findWinningBid(productId);
+        Bid winningBid = biddingRepository.findByProductIdAndIsWinningBidTrue(productId);
         if (winningBid == null) {
             throw new ResourceNotFoundException("Product does not have a winning bid yet");
         }
@@ -96,6 +107,14 @@ public class BiddingServiceImpl implements BiddingService {
         Product product = productOptional.get();
         product.setBiddingClosed(true);
         productRepository.save(product);
+
+        // notify all bidders that bidding has closed
+        List<UserEntity> bidders = biddingRepository.findDistinctBiddersByProductId(productId);
+        if (bidders.isEmpty()) {
+            return;
+        }
+        bidders.forEach(bidder -> notificationService.sendNotification(
+                "Bidding has closed for " + product.getName(), bidder.getId()));
     }
 
     @Override
@@ -106,8 +125,22 @@ public class BiddingServiceImpl implements BiddingService {
         }
 
         Product product = productOptional.get();
+
+        // if product already has a winner bidding is not allowed
+        if (product.getWinningBidder() != null) {
+            throw new ValidationException("Product already has a winner, bidding is not allowed");
+        }
+
         product.setBiddingClosed(false);
         productRepository.save(product);
+
+        // notify all bidders that bidding has reopened
+        List<UserEntity> biddingList = biddingRepository.findDistinctBiddersByProductId(productId);
+        if (biddingList.isEmpty()) {
+            return;
+        }
+        biddingList.forEach(bidder -> notificationService.sendNotification(
+                "Bidding has reopened for " + product.getName(), bidder.getId()));
     }
 
     @Override
@@ -118,8 +151,8 @@ public class BiddingServiceImpl implements BiddingService {
         }
 
         Product product = productOptional.get();
-        if (!product.isBiddingClosed()) {
-            throw new ValidationException("Bidding is not closed for this product");
+        if (product.isBiddingClosed()) {
+            throw new ValidationException("Bidding is closed for this product");
         }
 
         List<Bid> biddingList = biddingRepository.findBidsByProductIdOrderByBidAmountDesc(productId);
@@ -132,7 +165,21 @@ public class BiddingServiceImpl implements BiddingService {
 
         winningBid.setIsWinningBid(true);
         product.setWinningBidder(winner);
+        product.setBiddingClosed(true);
         productRepository.save(product);
         biddingRepository.save(winningBid);
+
+        // notify winner that they have won the product
+        notificationService.sendNotification(
+                "Congratulations! You have won " + product.getName(), winner.getId());
+
+        // notify other bidders that they have lost
+        List<Bid> losingBids = biddingRepository.findByProductIdAndIsWinningBidFalseAndBidderNot(productId, winner);
+        for (Bid bid : losingBids) {
+            notificationService.sendNotification(
+                    "You lost the bid on " + product.getName() + " to " + winner.getUsername(),
+                    bid.getBidder().getId()
+            );
+        }
     }
 }

@@ -1,7 +1,7 @@
 package com.example.biddingsystem.exceptions;
 
 import com.example.biddingsystem.utils.ErrorDetails;
-import org.apache.coyote.BadRequestException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.naming.AuthenticationException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
