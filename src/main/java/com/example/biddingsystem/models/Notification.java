@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Entity
 @AllArgsConstructor
@@ -19,4 +21,5 @@ public class Notification {
     private UserEntity user;
     private String message;
     private boolean isRead = false;
+    private Date timestamp = new Date();
 }

@@ -1,5 +1,6 @@
 package com.example.biddingsystem.controllers;
 
+import com.example.biddingsystem.dto.LandingPageProductDto;
 import com.example.biddingsystem.dto.ProductCreationDto;
 import com.example.biddingsystem.dto.ProductDto;
 import com.example.biddingsystem.services.ProductService;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
+@CrossOrigin(origins = "http://localhost:5173")
 @AllArgsConstructor
 public class ProductController {
     private ProductService productService;
@@ -32,6 +34,11 @@ public class ProductController {
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ProductDto> createProduct(@ModelAttribute @Valid ProductCreationDto product) throws IOException {
         return new ResponseEntity<>(productService.createProduct(product), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/unprotected")
+    public ResponseEntity<List<LandingPageProductDto>> getLandingPageProducts() {
+        return new ResponseEntity<>(productService.getLandingPageProducts(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

@@ -7,15 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDto {
+public class LandingPageProductDto {
     private Long id;
     private String name;
     private String description;
-    private Long categoryId;
-    private String condition;
     private Long minimumBid;
-    private Long currentBid;
-    private boolean isBiddingClosed;
     private Long remainingTime;
     private String productImageUrl;
 }

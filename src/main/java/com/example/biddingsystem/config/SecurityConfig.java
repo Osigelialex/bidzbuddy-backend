@@ -1,9 +1,9 @@
 package com.example.biddingsystem.config;
 
+import com.example.biddingsystem.security.AuthenticationPoint;
 import com.example.biddingsystem.security.JwtAuthenticationFilter;
 import com.example.biddingsystem.security.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,15 +25,21 @@ public class SecurityConfig {
 
     private UserDetailsServiceImpl userDetailsServiceImpl;
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private AuthenticationPoint authenticationPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req->req
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/signup").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/products/unprotected").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/categories").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/products").hasAuthority("SELLER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/products").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/products/**").hasAuthority("SELLER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/categories").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/categories/**").hasAuthority("ADMIN")
@@ -46,7 +52,8 @@ public class SecurityConfig {
                 )
                 .userDetailsService(userDetailsServiceImpl)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationPoint))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 
     @Bean

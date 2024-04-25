@@ -22,9 +22,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 .upload(multipartFile.getBytes(),
                         ObjectUtils.asMap(
                                 "use_filename", true,
-                                "unique_filename", false,
-                                "overwrite", true,
-                                "invalidate", true
+                                "unique_filename", true
                         ));
 
         // extract the image url from the upload result

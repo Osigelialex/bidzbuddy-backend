@@ -1,9 +1,6 @@
 package com.example.biddingsystem.services.impl;
 
-import com.example.biddingsystem.dto.LoginDto;
-import com.example.biddingsystem.dto.LoginResponseDto;
-import com.example.biddingsystem.dto.RegisterDto;
-import com.example.biddingsystem.dto.UserDto;
+import com.example.biddingsystem.dto.*;
 import com.example.biddingsystem.enums.Role;
 import com.example.biddingsystem.exceptions.ValidationException;
 import com.example.biddingsystem.exceptions.BiddingUnauthorizedException;
@@ -12,6 +9,8 @@ import com.example.biddingsystem.models.UserEntity;
 import com.example.biddingsystem.repositories.UserRepository;
 import com.example.biddingsystem.security.JwtService;
 import com.example.biddingsystem.services.AuthenticationService;
+import com.example.biddingsystem.services.NotificationService;
+import com.example.biddingsystem.utils.SecurityUtils;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,9 +20,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -32,8 +30,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final NotificationService notificationService;
     private final JwtService jwtService;
     private final ModelMapper modelMapper;
+    private final SecurityUtils securityUtils;
 
     @Override
     public void register(RegisterDto registerDto) {
@@ -70,14 +70,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     )
             );
 
-            UserEntity userEntity = userRepository.findByUsername(authentication.getName()).orElseThrow();
+            UserEntity userEntity = userRepository.findByUsernameOrEmail(
+                    authentication.getName(), authentication.getName()).orElseThrow();
             String token = jwtService.generateToken(userEntity);
-            UserDto userDto = modelMapper.map(userEntity, UserDto.class);
-            return new LoginResponseDto(userDto, token);
+            return new LoginResponseDto(token);
         } catch (AuthenticationException e) {
             throw new BiddingUnauthorizedException("Invalid username or password");
         } catch (NoSuchElementException e) {
             throw new BiddingUnauthorizedException("User not found");
         }
+    }
+
+    @Override
+    public UserDto getAuthenticatedUser() {
+        UserEntity userEntity = securityUtils.getCurrentUser();
+        List<NotificationDto> notificationDtoList = notificationService.getUnreadNotifications();
+        UserDto userDto = modelMapper.map(userEntity, UserDto.class);
+        userDto.setNotifications(notificationDtoList);
+        return userDto;
     }
 }

@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/bids")
+@CrossOrigin(origins = "http://localhost:5173")
 public class BidController {
 
     @Autowired

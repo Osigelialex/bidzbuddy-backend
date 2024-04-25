@@ -1,5 +1,6 @@
 package com.example.biddingsystem.services.impl;
 
+import com.example.biddingsystem.dto.LandingPageProductDto;
 import com.example.biddingsystem.dto.ProductCreationDto;
 import com.example.biddingsystem.dto.ProductDto;
 import com.example.biddingsystem.enums.Condition;
@@ -20,6 +21,9 @@ import com.example.biddingsystem.utils.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -65,15 +69,35 @@ public class ProductServiceImpl implements ProductService {
             products = productRepository.findAll();
         }
 
-        return products.stream().map(product -> modelMapper.map(product, ProductDto.class))
-                .collect(Collectors.toList());
+        return products.stream().map(product -> {
+            ProductDto productDto = modelMapper.map(product, ProductDto.class);
+            productDto.setRemainingTime(product.getRemainingTime());
+            return productDto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<LandingPageProductDto> getLandingPageProducts() {
+        Pageable pageable = PageRequest.of(0, 6);
+        Page<Product> page = productRepository.findAll(pageable);
+        List<Product> products = page.getContent();
+        if (products.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return products.stream().map(product -> {
+            LandingPageProductDto landingPageProductDto = modelMapper.map(product, LandingPageProductDto.class);
+            landingPageProductDto.setRemainingTime(product.getRemainingTime());
+            return landingPageProductDto;
+        }).collect(Collectors.toList());
     }
 
     @Override
     public ProductDto getProductById(Long id) {
         Optional<Product> product = productRepository.findById(id);
         if (product.isEmpty()) throw new ValidationException("Product not found");
-        return modelMapper.map(product.get(), ProductDto.class);
+        ProductDto productDto = modelMapper.map(product.get(), ProductDto.class);
+        productDto.setRemainingTime(productDto.getRemainingTime());
+        return productDto;
     }
 
     @Override
@@ -120,7 +144,9 @@ public class ProductServiceImpl implements ProductService {
                 currentUser.getId()
         );
 
-        return modelMapper.map(productRepository.save(newProduct), ProductDto.class);
+        ProductDto productDto = modelMapper.map(productRepository.save(newProduct), ProductDto.class);
+        productDto.setRemainingTime(productDto.getRemainingTime());
+        return productDto;
     }
 
     @Override
@@ -145,8 +171,11 @@ public class ProductServiceImpl implements ProductService {
         if (products.isEmpty()) {
             return Collections.emptyList();
         }
-        return products.stream().map(product -> modelMapper.map(product, ProductDto.class))
-                .collect(Collectors.toList());
+        return products.stream().map(product -> {
+            ProductDto productDto = modelMapper.map(product, ProductDto.class);
+            productDto.setRemainingTime(productDto.getRemainingTime());
+            return productDto;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -155,8 +184,11 @@ public class ProductServiceImpl implements ProductService {
         if (products.isEmpty()) {
             return Collections.emptyList();
         }
-        return products.stream().map(product -> modelMapper.map(product, ProductDto.class))
-                .collect(Collectors.toList());
+        return products.stream().map(product -> {
+            ProductDto productDto = modelMapper.map(product, ProductDto.class);
+            productDto.setRemainingTime(productDto.getRemainingTime());
+            return productDto;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -171,8 +203,11 @@ public class ProductServiceImpl implements ProductService {
         if (products.isEmpty()) {
             return Collections.emptyList();
         }
-        return products.stream().map(product -> modelMapper.map(product, ProductDto.class))
-                .collect(Collectors.toList());
+        return products.stream().map(product -> {
+            ProductDto productDto = modelMapper.map(product, ProductDto.class);
+            productDto.setRemainingTime(productDto.getRemainingTime());
+            return productDto;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -184,8 +219,11 @@ public class ProductServiceImpl implements ProductService {
         if (products.isEmpty()) {
             return Collections.emptyList();
         }
-        return products.stream().map(product -> modelMapper.map(product, ProductDto.class))
-                .collect(Collectors.toList());
+        return products.stream().map(product -> {
+            ProductDto productDto = modelMapper.map(product, ProductDto.class);
+            productDto.setRemainingTime(productDto.getRemainingTime());
+            return productDto;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -206,8 +244,11 @@ public class ProductServiceImpl implements ProductService {
         if (products.isEmpty()) {
             return Collections.emptyList();
         }
-        return products.stream().map(product -> modelMapper.map(product, ProductDto.class))
-                .collect(Collectors.toList());
+        return products.stream().map(product -> {
+            ProductDto productDto = modelMapper.map(product, ProductDto.class);
+            productDto.setRemainingTime(productDto.getRemainingTime());
+            return productDto;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -225,7 +266,11 @@ public class ProductServiceImpl implements ProductService {
         if (products.isEmpty()) {
             return Collections.emptyList();
         }
-        return products.stream().map(product -> modelMapper.map(product, ProductDto.class))
+        return products.stream().map(product -> {
+            ProductDto productDto = modelMapper.map(product, ProductDto.class);
+            productDto.setRemainingTime(productDto.getRemainingTime());
+            return productDto;
+        })
                 .collect(Collectors.toList());
     }
 
@@ -246,8 +291,11 @@ public class ProductServiceImpl implements ProductService {
         if (products.isEmpty()) {
             return Collections.emptyList();
         }
-        return products.stream().map(product -> modelMapper.map(product, ProductDto.class))
-                .collect(Collectors.toList());
+        return products.stream().map(product -> {
+            ProductDto productDto = modelMapper.map(product, ProductDto.class);
+            productDto.setRemainingTime(productDto.getRemainingTime());
+            return productDto;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -273,7 +321,10 @@ public class ProductServiceImpl implements ProductService {
         if (products.isEmpty()) {
             return Collections.emptyList();
         }
-        return products.stream().map(product -> modelMapper.map(product, ProductDto.class))
-                .collect(Collectors.toList());
+        return products.stream().map(product -> {
+            ProductDto productDto = modelMapper.map(product, ProductDto.class);
+            productDto.setRemainingTime(productDto.getRemainingTime());
+            return productDto;
+        }).collect(Collectors.toList());
     }
 }

@@ -1,5 +1,6 @@
 package com.example.biddingsystem.services;
 
+import com.example.biddingsystem.dto.LandingPageProductDto;
 import com.example.biddingsystem.dto.ProductCreationDto;
 import com.example.biddingsystem.dto.ProductDto;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 public interface ProductService {
     List<ProductDto> getAllProducts(Long categoryId, String condition, Double minimumBid);
+    List<LandingPageProductDto> getLandingPageProducts();
     ProductDto getProductById(Long id);
     ProductDto createProduct(ProductCreationDto product) throws IOException;
     void deleteProduct(Long id);

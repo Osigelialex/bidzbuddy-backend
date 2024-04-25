@@ -10,12 +10,7 @@ import java.util.function.Function;
 
 public interface JwtService {
     String generateToken(UserEntity userEntity);
-    String extractUsername(String token);
-    Date extractExpiration(String token);
-    boolean isTokenExpired(String token);
     SecretKey getSignInKey();
-    Claims extractAllClaims(String token);
-    <T> T extractClaim(String token, Function<Claims, T> resolver);
-    boolean isValid(String token, UserDetails user);
-
+    String extractUsername(String token);
+    boolean validateToken(String token);
 }

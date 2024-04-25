@@ -15,6 +15,7 @@ import com.example.biddingsystem.utils.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -46,6 +47,7 @@ public class BiddingServiceImpl implements BiddingService {
         }
 
         // the first user to bid on a product can bid the minimum amount otherwise it is not allowed
+        System.out.println(bidDto.getBidAmount());
         if (bidDto.getBidAmount().equals(product.getMinimumBid()) &&
                 !product.getMinimumBid().equals(product.getCurrentBid())) {
             throw new ValidationException("Bid amount must be greater than " + product.getCurrentBid());
@@ -69,7 +71,8 @@ public class BiddingServiceImpl implements BiddingService {
         if (previousBids.size() > 1) {
             Bid previousBid = previousBids.get(1);
             UserEntity previousBidder = previousBid.getBidder();
-            notificationService.sendNotification("You have been outbid on " + product.getName(), previousBidder.getId());
+            notificationService.sendNotification("😲 You have been outbid on " + product.getName(),
+                    previousBidder.getId());
         }
     }
 
@@ -151,13 +154,12 @@ public class BiddingServiceImpl implements BiddingService {
         }
 
         Product product = productOptional.get();
-        if (product.isBiddingClosed()) {
-            throw new ValidationException("Bidding is closed for this product");
-        }
-
         List<Bid> biddingList = biddingRepository.findBidsByProductIdOrderByBidAmountDesc(productId);
+
+        // if no user has placed a bid on the product close bidding for that product
         if (biddingList.isEmpty()) {
-            throw new ResourceNotFoundException("No bids found for this product");
+            closeBidding(productId);
+            return;
         }
 
         Bid winningBid = biddingList.get(0);
@@ -169,17 +171,29 @@ public class BiddingServiceImpl implements BiddingService {
         productRepository.save(product);
         biddingRepository.save(winningBid);
 
-        // notify winner that they have won the product
-        notificationService.sendNotification(
-                "Congratulations! You have won " + product.getName(), winner.getId());
+        notificationService.sendNotification("🎉 Congratulations! You have won " + product.getName(), winner.getId());
 
-        // notify other bidders that they have lost
         List<Bid> losingBids = biddingRepository.findByProductIdAndIsWinningBidFalseAndBidderNot(productId, winner);
+
         for (Bid bid : losingBids) {
             notificationService.sendNotification(
-                    "You lost the bid on " + product.getName() + " to " + winner.getUsername(),
+                    "😞 You lost the bid on " + product.getName() + " to " + winner.getUsername(),
                     bid.getBidder().getId()
             );
+        }
+    }
+
+    @Scheduled(fixedRate = 60000)
+    public void checkBiddingStatus() {
+        List<Product> products = productRepository.findAll();
+        for (Product product : products) {
+            if (product.isBiddingClosed()) {
+                continue;
+            }
+
+            if (product.getEndTime().getTime() <= System.currentTimeMillis() && product.isBiddingClosed() == false) {
+                declareWinner(product.getId());
+            }
         }
     }
 }
