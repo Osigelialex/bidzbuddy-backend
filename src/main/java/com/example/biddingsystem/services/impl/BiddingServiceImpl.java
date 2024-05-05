@@ -2,6 +2,7 @@ package com.example.biddingsystem.services.impl;
 
 import com.example.biddingsystem.dto.BidDto;
 import com.example.biddingsystem.dto.BidListDto;
+import com.example.biddingsystem.dto.UserBidsDto;
 import com.example.biddingsystem.exceptions.ResourceNotFoundException;
 import com.example.biddingsystem.exceptions.ValidationException;
 import com.example.biddingsystem.models.Bid;
@@ -33,6 +34,15 @@ public class BiddingServiceImpl implements BiddingService {
     private final SecurityUtils securityUtils;
     private final ModelMapper modelMapper;
     private final NotificationService notificationService;
+
+    @Override
+    public List<UserBidsDto> getUserBids() {
+        List<Bid> userBids = biddingRepository.findBidsByBidderId(securityUtils.getCurrentUser().getId());
+        if (userBids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return userBids.stream().map(bid -> modelMapper.map(bid, UserBidsDto.class)).collect(Collectors.toList());
+    }
 
     @Override
     public void placeBid(Long productId, BidDto bidDto) {
@@ -162,7 +172,7 @@ public class BiddingServiceImpl implements BiddingService {
             return;
         }
 
-        Bid winningBid = biddingList.get(0);
+        Bid winningBid = biddingList.getFirst();
         UserEntity winner = winningBid.getBidder();
 
         winningBid.setIsWinningBid(true);
@@ -191,7 +201,7 @@ public class BiddingServiceImpl implements BiddingService {
                 continue;
             }
 
-            if (product.getEndTime().getTime() <= System.currentTimeMillis() && product.isBiddingClosed() == false) {
+            if (product.getEndTime().getTime() <= System.currentTimeMillis() && !product.isBiddingClosed()) {
                 declareWinner(product.getId());
             }
         }

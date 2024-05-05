@@ -11,6 +11,7 @@ import java.util.List;
 
 @Repository
 public interface BiddingRepository extends JpaRepository<Bid, String> {
+    List<Bid> findBidsByBidderId(Long bidderId);
     List<Bid> findBidsByProductIdOrderByBidAmountDesc(Long productId);
     Bid findByProductIdAndIsWinningBidTrue(Long productId);
     List<Bid> findByProductIdAndIsWinningBidFalseAndBidderNot(Long productId, UserEntity winner);

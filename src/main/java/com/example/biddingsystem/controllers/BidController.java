@@ -2,6 +2,7 @@ package com.example.biddingsystem.controllers;
 
 import com.example.biddingsystem.dto.BidDto;
 import com.example.biddingsystem.dto.BidListDto;
+import com.example.biddingsystem.dto.UserBidsDto;
 import com.example.biddingsystem.services.BiddingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,11 @@ public class BidController {
 
     @Autowired
     private BiddingService biddingService;
+
+    @GetMapping
+    public ResponseEntity<List<UserBidsDto>> getUserBids() {
+        return ResponseEntity.ok(biddingService.getUserBids());
+    }
 
     @PostMapping("/place/{productId}")
     public ResponseEntity<String> placeBid(@PathVariable("productId") Long productId, @RequestBody BidDto bidDto) {
