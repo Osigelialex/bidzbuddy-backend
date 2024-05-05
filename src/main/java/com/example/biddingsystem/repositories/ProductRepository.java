@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    List<Product> findProductsBySellerId(Long sellerId);
+
     List<Product> findProductsByCategoryId(@Param("categoryId") Long categoryId);
 
     List<Product> findProductsByCondition(@Param("condition") Condition condition);

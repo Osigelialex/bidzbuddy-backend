@@ -22,6 +22,8 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    @Column(length = 1024)
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,7 +38,7 @@ public class Product {
     @Enumerated(value = EnumType.STRING)
     private Condition condition;
     private Long minimumBid;
-    private Long currentBid = minimumBid;
+    private Long currentBid;
     private boolean isBiddingClosed = false;
 
     private Date endTime = setEndTime();

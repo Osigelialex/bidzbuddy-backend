@@ -3,8 +3,8 @@ package com.example.biddingsystem.exceptions;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class BiddingUnauthorizedException extends RuntimeException {
-    public BiddingUnauthorizedException(String message) {
+public class UnauthorizedException extends RuntimeException {
+    public UnauthorizedException(String message) {
         super(message);
     }
 }

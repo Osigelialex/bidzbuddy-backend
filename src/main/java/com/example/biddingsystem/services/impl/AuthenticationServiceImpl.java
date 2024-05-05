@@ -3,7 +3,7 @@ package com.example.biddingsystem.services.impl;
 import com.example.biddingsystem.dto.*;
 import com.example.biddingsystem.enums.Role;
 import com.example.biddingsystem.exceptions.ValidationException;
-import com.example.biddingsystem.exceptions.BiddingUnauthorizedException;
+import com.example.biddingsystem.exceptions.UnauthorizedException;
 import com.example.biddingsystem.exceptions.DataConflictException;
 import com.example.biddingsystem.models.UserEntity;
 import com.example.biddingsystem.repositories.UserRepository;
@@ -75,9 +75,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             String token = jwtService.generateToken(userEntity);
             return new LoginResponseDto(token);
         } catch (AuthenticationException e) {
-            throw new BiddingUnauthorizedException("Invalid username or password");
+            throw new UnauthorizedException("Invalid username or password");
         } catch (NoSuchElementException e) {
-            throw new BiddingUnauthorizedException("User not found");
+            throw new UnauthorizedException("User not found");
         }
     }
 

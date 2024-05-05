@@ -45,9 +45,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(value = BiddingUnauthorizedException.class)
+    @ExceptionHandler(value = UnauthorizedException.class)
     public ResponseEntity<ErrorDetails> handleBiddingUnauthorizedException(
-            BiddingUnauthorizedException biddingUnauthorizedException) {
+            UnauthorizedException biddingUnauthorizedException) {
         ErrorDetails errorDetails = new ErrorDetails(biddingUnauthorizedException.getMessage(),
                 HttpStatus.UNAUTHORIZED, new Date());
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);

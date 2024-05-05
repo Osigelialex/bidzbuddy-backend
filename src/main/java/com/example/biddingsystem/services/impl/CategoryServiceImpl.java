@@ -22,7 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category createCategory(Category category) {
-        if (category.getName() == null || category.getDescription() == null) {
+        if (category.getName() == null) {
             throw new ValidationException("All fields are required");
         }
 
@@ -53,9 +53,6 @@ public class CategoryServiceImpl implements CategoryService {
         if (category.getName() != null && category.getName().isEmpty()) {
             throw new ValidationException("Category name cannot be empty");
         }
-        if (category.getDescription() != null && category.getDescription().isEmpty()) {
-            throw new ValidationException("Category description cannot be empty");
-        }
 
         if (category.getName() != null && categoryRepository.existsByName(category.getName())) {
             throw new ValidationException("Category already exists");
@@ -64,7 +61,6 @@ public class CategoryServiceImpl implements CategoryService {
         Category updatedcategory = categoryOptional.get();
 
         if (category.getName() != null) updatedcategory.setName(category.getName());
-        if (category.getDescription() != null) updatedcategory.setDescription(category.getDescription());
         return categoryRepository.save(updatedcategory);
     }
 

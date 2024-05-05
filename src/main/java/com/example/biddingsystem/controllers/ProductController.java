@@ -31,6 +31,11 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
+    @GetMapping("/user")
+    public ResponseEntity<List<ProductDto>> getProductsBySeller() {
+        return new ResponseEntity<>(productService.getProductsBySeller(), HttpStatus.OK);
+    }
+
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ProductDto> createProduct(@ModelAttribute @Valid ProductCreationDto product) throws IOException {
         return new ResponseEntity<>(productService.createProduct(product), HttpStatus.CREATED);
