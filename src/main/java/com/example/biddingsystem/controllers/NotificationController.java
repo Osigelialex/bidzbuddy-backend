@@ -12,10 +12,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/notifications")
+@CrossOrigin(origins = "http://localhost:5173")
 @AllArgsConstructor
 public class NotificationController {
 
     private final NotificationService notificationService;
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getNotificationCount(){
+        return new ResponseEntity<>(notificationService.getUnreadNotificationsCount(), HttpStatus.OK);
+    }
 
     @PostMapping("/send")
     public ResponseEntity<String> sendNotification(@RequestBody SendNotificationDto sendNotificationDto){

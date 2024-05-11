@@ -13,5 +13,6 @@ public class LandingPageProductDto {
     private String description;
     private Long minimumBid;
     private Long remainingTime;
+    private String condition;
     private String productImageUrl;
 }

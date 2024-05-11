@@ -20,7 +20,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -84,9 +83,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public UserDto getAuthenticatedUser() {
         UserEntity userEntity = securityUtils.getCurrentUser();
-        List<NotificationDto> notificationDtoList = notificationService.getUnreadNotifications();
+        int notifications = notificationService.getUnreadNotifications().size();
         UserDto userDto = modelMapper.map(userEntity, UserDto.class);
-        userDto.setNotifications(notificationDtoList);
+        userDto.setNotifications(notifications);
         return userDto;
     }
 }

@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
@@ -138,6 +139,10 @@ public class ProductServiceImpl implements ProductService {
             throw new ValidationException("Condition must be either NEW or USED");
         }
 
+        if (!validateImage(product.getProductImage())) {
+            throw new ValidationException("Invalid image format");
+        }
+
         String uploadedImageUrl;
         try {
             uploadedImageUrl = fileUploadService.uploadImage(product.getProductImage());
@@ -195,5 +200,13 @@ public class ProductServiceImpl implements ProductService {
             productDto.setRemainingTime(productDto.getRemainingTime());
             return productDto;
         }).collect(Collectors.toList());
+    }
+
+    public boolean validateImage(MultipartFile image) {
+        String contentType = image.getContentType();
+        if (contentType == null) {
+            return false;
+        }
+        return contentType.startsWith("image/");
     }
 }

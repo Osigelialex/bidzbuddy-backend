@@ -60,7 +60,7 @@ public class NotificationServiceImpl implements NotificationService {
         }
 
         UserEntity user = userOptional.get();
-        List<Notification> userNotifications = user.getNotifications();
+        List<Notification> userNotifications = notificationRepository.findByUser(userOptional.get());
         if (userNotifications.isEmpty()) {
             return;
         }
@@ -87,7 +87,18 @@ public class NotificationServiceImpl implements NotificationService {
         }
 
         UserEntity user = userOptional.get();
-        user.getNotifications().forEach(notificationRepository::delete);
+        List<Notification> userNotifications = notificationRepository.findByUser(user);
+        userNotifications.forEach(notificationRepository::delete);
+    }
+
+    @Override
+    public Integer getUnreadNotificationsCount() {
+        Optional<UserEntity> userOptional = userRepository.findById(securityUtils.getCurrentUser().getId());
+        if (userOptional.isEmpty()) {
+            throw new ResourceNotFoundException("User not found");
+        }
+
+        return notificationRepository.findByUserAndIsReadFalse(userOptional.get()).size();
     }
 
     @Override
