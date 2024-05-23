@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface BiddingService {
     List<UserBidsDto> getUserBids();
+    List<BidListDto> getAllBids();
     void placeBid(Long productId, BidDto bidDto);
     List<BidListDto> getBiddingList(Long productId);
     BidListDto getWinningBid(Long productId);

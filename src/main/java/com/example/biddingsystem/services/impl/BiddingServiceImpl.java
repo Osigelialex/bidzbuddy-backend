@@ -45,6 +45,12 @@ public class BiddingServiceImpl implements BiddingService {
     }
 
     @Override
+    public List<BidListDto> getAllBids() {
+        List<Bid> bidList = biddingRepository.findAll();
+        return bidList.stream().map(bid -> modelMapper.map(bid, BidListDto.class)).toList();
+    }
+
+    @Override
     public void placeBid(Long productId, BidDto bidDto) {
         Optional<Product> productOptional = productRepository.findById(productId);
         if (productOptional.isEmpty()) {
@@ -84,6 +90,10 @@ public class BiddingServiceImpl implements BiddingService {
             notificationService.sendNotification("😲 You have been outbid on " + product.getName(),
                     previousBidder.getId());
         }
+
+        // notify the seller that a new bid has been placed on their product
+        notificationService.sendNotification("🎉 A new bid has been placed on " + product.getName(),
+                product.getSeller().getId());
     }
 
     @Override

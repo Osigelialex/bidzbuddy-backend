@@ -24,6 +24,11 @@ public class BidController {
         return ResponseEntity.ok(biddingService.getUserBids());
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<BidListDto>> getAllBids() {
+        return ResponseEntity.ok(biddingService.getAllBids());
+    }
+
     @PostMapping("/place/{productId}")
     public ResponseEntity<String> placeBid(@PathVariable("productId") Long productId, @RequestBody BidDto bidDto) {
         biddingService.placeBid(productId, bidDto);
