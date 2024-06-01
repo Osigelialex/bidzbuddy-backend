@@ -10,6 +10,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserBidsDto {
+    private String bidderUsername;
+    private Long productId;
     private String productImageUrl;
     private String productName;
     private Long bidAmount;

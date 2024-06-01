@@ -24,6 +24,11 @@ public class BidController {
         return ResponseEntity.ok(biddingService.getUserBids());
     }
 
+    @GetMapping("/recent")
+    public ResponseEntity<List<UserBidsDto>> getLatestBids() {
+        return ResponseEntity.ok(biddingService.getLatestBids());
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<BidListDto>> getAllBids() {
         return ResponseEntity.ok(biddingService.getAllBids());

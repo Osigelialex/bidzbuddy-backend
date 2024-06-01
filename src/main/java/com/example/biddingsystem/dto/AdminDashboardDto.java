@@ -13,5 +13,6 @@ public class AdminDashboardDto {
     private int totalUsers;
     private int totalProducts;
     private AtomicInteger totalBidAmount;
+    private float averageBidAmount;
     private int totalCategories;
 }

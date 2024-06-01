@@ -1,5 +1,6 @@
 package com.example.biddingsystem.services.impl;
 
+import com.example.biddingsystem.dto.DashboardProductsDto;
 import com.example.biddingsystem.dto.LandingPageProductDto;
 import com.example.biddingsystem.dto.ProductCreationDto;
 import com.example.biddingsystem.dto.ProductDto;
@@ -56,6 +57,33 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return products.stream().map(product -> modelMapper.map(product, ProductDto.class)).toList();
+    }
+
+    @Override
+    public List<DashboardProductsDto> getProductsForDashboard() {
+        List<Product> products = productRepository.findAll();
+        if (products.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return products.stream().map(product -> modelMapper.map(product, DashboardProductsDto.class)).toList();
+    }
+
+    @Override
+    public void closeAuctionForProduct(Long productId) {
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            throw new ResourceNotFoundException("Product not found");
+        }
+        Product product = productOptional.get();
+        product.setBiddingClosed(true);
+        productRepository.save(product);
+
+        // notify seller that product has been closed by admin
+        notificationService.sendNotification(
+                "Auctioning for product with name " + product.getName() + " has been closed by admin",
+                product.getSeller().getId()
+        );
     }
 
     @Override

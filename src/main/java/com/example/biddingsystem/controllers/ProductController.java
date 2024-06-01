@@ -1,5 +1,6 @@
 package com.example.biddingsystem.controllers;
 
+import com.example.biddingsystem.dto.DashboardProductsDto;
 import com.example.biddingsystem.dto.LandingPageProductDto;
 import com.example.biddingsystem.dto.ProductCreationDto;
 import com.example.biddingsystem.dto.ProductDto;
@@ -34,6 +35,17 @@ public class ProductController {
     @GetMapping("/user")
     public ResponseEntity<List<ProductDto>> getProductsBySeller() {
         return new ResponseEntity<>(productService.getProductsBySeller(), HttpStatus.OK);
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<List<DashboardProductsDto>> getProductsForDashboard() {
+        return new ResponseEntity<>(productService.getProductsForDashboard(), HttpStatus.OK);
+    }
+
+    @PatchMapping("/close/{productId}")
+    public ResponseEntity<String> closeAuctionForProduct(@PathVariable("productId") Long productId) {
+        productService.closeAuctionForProduct(productId);
+        return new ResponseEntity<>("Auction closed successfully", HttpStatus.OK);
     }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

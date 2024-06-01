@@ -29,7 +29,7 @@ public class AuthController {
         return new ResponseEntity<>(loginResponseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/get-user")
+    @GetMapping("/me")
     public ResponseEntity<UserDto> getAuthenticatedUser() {
         UserDto userDto = authenticationService.getAuthenticatedUser();
         return new ResponseEntity<>(userDto, HttpStatus.OK);

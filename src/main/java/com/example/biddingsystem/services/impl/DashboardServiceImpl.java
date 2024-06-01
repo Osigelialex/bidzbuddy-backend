@@ -34,7 +34,8 @@ public class DashboardServiceImpl implements DashboardService {
         List<Bid> bidList = bidRepository.findAll();
         bidList.forEach(bid -> totalBidAmount.addAndGet(Math.toIntExact(bid.getBidAmount())));
         int totalCategories = categoryRepository.findAll().size();
+        float averageBidAmount = (float) totalBidAmount.get() / bidList.size();
 
-        return new AdminDashboardDto(totalUsers, totalProducts, totalBidAmount, totalCategories);
+        return new AdminDashboardDto(totalUsers, totalProducts, totalBidAmount, averageBidAmount, totalCategories);
     }
 }

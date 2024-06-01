@@ -72,7 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             UserEntity userEntity = userRepository.findByUsernameOrEmail(
                     authentication.getName(), authentication.getName()).orElseThrow();
             String token = jwtService.generateToken(userEntity);
-            return new LoginResponseDto(token);
+            return new LoginResponseDto(token, modelMapper.map(userEntity, UserDto.class));
         } catch (AuthenticationException e) {
             throw new UnauthorizedException("Invalid username or password");
         } catch (NoSuchElementException e) {

@@ -16,11 +16,15 @@ import com.example.biddingsystem.utils.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,7 +38,7 @@ public class BiddingServiceImpl implements BiddingService {
     private final SecurityUtils securityUtils;
     private final ModelMapper modelMapper;
     private final NotificationService notificationService;
-
+    
     @Override
     public List<UserBidsDto> getUserBids() {
         List<Bid> userBids = biddingRepository.findBidsByBidderId(securityUtils.getCurrentUser().getId());
@@ -51,6 +55,14 @@ public class BiddingServiceImpl implements BiddingService {
     }
 
     @Override
+    public List<UserBidsDto> getLatestBids() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Bid> bidsPage = biddingRepository.findBids(pageable);
+        List<Bid> bids = bidsPage.getContent();
+        return bids.stream().map(bid -> modelMapper.map(bid, UserBidsDto.class)).toList();
+    }
+
+    @Override
     public void placeBid(Long productId, BidDto bidDto) {
         Optional<Product> productOptional = productRepository.findById(productId);
         if (productOptional.isEmpty()) {
@@ -63,7 +75,7 @@ public class BiddingServiceImpl implements BiddingService {
         }
 
         // the first user to bid on a product can bid the minimum amount otherwise it is not allowed
-        System.out.println(bidDto.getBidAmount());
+  
         if (bidDto.getBidAmount().equals(product.getMinimumBid()) &&
                 !product.getMinimumBid().equals(product.getCurrentBid())) {
             throw new ValidationException("Bid amount must be greater than " + product.getCurrentBid());
@@ -82,17 +94,20 @@ public class BiddingServiceImpl implements BiddingService {
         bid.setBidAmount(bidDto.getBidAmount());
         biddingRepository.save(bid);
 
-        // notify previous highest bidder that they have been outbid
+        // notify previous highest bidder that they have been outbid except if the previous bidder is same as new
+        // highest bidder
         List<Bid> previousBids = biddingRepository.findBidsByProductIdOrderByBidAmountDesc(productId);
         if (previousBids.size() > 1) {
             Bid previousBid = previousBids.get(1);
             UserEntity previousBidder = previousBid.getBidder();
-            notificationService.sendNotification("😲 You have been outbid on " + product.getName(),
-                    previousBidder.getId());
+            if (!Objects.equals(previousBids.get(0).getBidder().getId(), previousBidder.getId())) {
+                notificationService.sendNotification("😲 You have been outbid on " + product.getName() + " by " + previousBidder.getUsername(),
+                        previousBidder.getId());
+            }
         }
 
         // notify the seller that a new bid has been placed on their product
-        notificationService.sendNotification("🎉 A new bid has been placed on " + product.getName(),
+        notificationService.sendNotification("🎉 A new bid has been placed on " + product.getName() + " by " + previousBids.get(0).getBidder().getUsername(),
                 product.getSeller().getId());
     }
 

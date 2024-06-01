@@ -23,6 +23,7 @@ public class JwtServiceImpl implements JwtService {
         return Jwts
                 .builder()
                 .subject(userEntity.getUsername())
+                .claim("role", userEntity.getRole().name())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 60*60*1000))
                 .signWith(getSignInKey())
