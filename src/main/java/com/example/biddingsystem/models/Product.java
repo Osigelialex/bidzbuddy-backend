@@ -1,6 +1,7 @@
 package com.example.biddingsystem.models;
 
 import com.example.biddingsystem.enums.Condition;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,7 +40,8 @@ public class Product {
     private Condition condition;
     private Long minimumBid;
     private Long currentBid;
-    private boolean isBiddingClosed = false;
+
+    private boolean isBiddingClosed;
 
     private Date endTime = setEndTime();
 

@@ -12,6 +12,7 @@ import java.util.Date;
 public class BidListDto {
     private String bidderUsername;
     private Long bidAmount;
+    private String productCategoryName;
     private Boolean isWinningBid;
     private Date timestamp;
 }

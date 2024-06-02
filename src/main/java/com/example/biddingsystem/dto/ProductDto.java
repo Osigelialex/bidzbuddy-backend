@@ -15,7 +15,7 @@ public class ProductDto {
     private String condition;
     private Long minimumBid;
     private Long currentBid;
-    private boolean isBiddingClosed;
+    private boolean biddingClosed;
     private Long remainingTime;
     private String productImageUrl;
 }

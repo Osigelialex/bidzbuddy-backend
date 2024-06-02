@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/dashboard").hasAuthority("ADMIN")
                         .requestMatchers("/api/v1/bids/all").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/bids/place").hasAuthority("BUYER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/bids/list/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/bids/close/**")
                         .hasAnyAuthority("SELLER", "ADMIN")
                         .requestMatchers("/api/v1/bids/winner/**").hasAuthority("SELLER")

@@ -41,7 +41,6 @@ public class ProductServiceImpl implements ProductService {
     private final FileUploadServiceImpl fileUploadService;
     private final CategoryRepository categoryRepository;
     private final SecurityUtils securityUtils;
-    private final UserRepository userRepository;
     private final NotificationService notificationService;
 
     @Override
@@ -75,13 +74,40 @@ public class ProductServiceImpl implements ProductService {
         if (productOptional.isEmpty()) {
             throw new ResourceNotFoundException("Product not found");
         }
+
         Product product = productOptional.get();
+        if (product.isBiddingClosed()) {
+            throw new ValidationException("Product auction is already closed");
+        }
+
         product.setBiddingClosed(true);
         productRepository.save(product);
 
         // notify seller that product has been closed by admin
         notificationService.sendNotification(
                 "Auctioning for product with name " + product.getName() + " has been closed by admin",
+                product.getSeller().getId()
+        );
+    }
+
+    @Override
+    public void reopenAuctionForProduct(Long productId) {
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            throw new ResourceNotFoundException("Product not found");
+        }
+
+        Product product = productOptional.get();
+        if (!product.isBiddingClosed()) {
+            throw new ValidationException("Product auction is already open");
+        }
+
+        product.setBiddingClosed(false);
+        productRepository.save(product);
+
+        // notify seller that product has been reopened by admin
+        notificationService.sendNotification(
+                "Auctioning for product with name " + product.getName() + " has been reopened by admin",
                 product.getSeller().getId()
         );
     }

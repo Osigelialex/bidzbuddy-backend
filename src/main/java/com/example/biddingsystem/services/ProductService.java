@@ -13,6 +13,7 @@ public interface ProductService {
     List<ProductDto> getProductsBySeller();
     List<DashboardProductsDto> getProductsForDashboard();
     void closeAuctionForProduct(Long productId);
+    void reopenAuctionForProduct(Long productId);
     List<ProductDto> getAllProducts(Long categoryId, String condition, Double minimumBid);
     List<LandingPageProductDto> getLandingPageProducts();
     ProductDto getProductById(Long id);

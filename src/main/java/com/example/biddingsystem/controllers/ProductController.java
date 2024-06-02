@@ -4,6 +4,7 @@ import com.example.biddingsystem.dto.DashboardProductsDto;
 import com.example.biddingsystem.dto.LandingPageProductDto;
 import com.example.biddingsystem.dto.ProductCreationDto;
 import com.example.biddingsystem.dto.ProductDto;
+import com.example.biddingsystem.models.Product;
 import com.example.biddingsystem.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -46,6 +47,12 @@ public class ProductController {
     public ResponseEntity<String> closeAuctionForProduct(@PathVariable("productId") Long productId) {
         productService.closeAuctionForProduct(productId);
         return new ResponseEntity<>("Auction closed successfully", HttpStatus.OK);
+    }
+
+    @PatchMapping("/reopen/{productId}")
+    public ResponseEntity<String> reopenAuctionForProduct(@PathVariable("productId") Long productId) {
+        productService.reopenAuctionForProduct(productId);
+        return new ResponseEntity<>("Auction reopened successfully", HttpStatus.OK);
     }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
