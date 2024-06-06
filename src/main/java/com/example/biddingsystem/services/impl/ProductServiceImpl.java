@@ -69,6 +69,34 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public void approveProduct(Long productId) {
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            throw new ResourceNotFoundException("Product not found");
+        }
+
+        Product product = productOptional.get();
+        product.setProductApproved(true);
+        productRepository.save(product);
+
+        // notify seller that product has been approved
+        notificationService.sendNotification(
+                "The wait is over! " + product.getName() + " has been approved",
+                product.getSeller().getId()
+        );
+    }
+
+    @Override
+    public List<DashboardProductsDto> getUnapprovedProducts() {
+        List<Product> unapprovedProducts = productRepository.findProductsByProductApprovedIsFalse();
+        if (unapprovedProducts.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return unapprovedProducts.stream().map(product -> modelMapper.map(product, DashboardProductsDto.class)).toList();
+    }
+
+    @Override
     public void closeAuctionForProduct(Long productId) {
         Optional<Product> productOptional = productRepository.findById(productId);
         if (productOptional.isEmpty()) {
@@ -152,8 +180,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<LandingPageProductDto> getLandingPageProducts() {
         Pageable pageable = PageRequest.of(0, 6);
-        Page<Product> page = productRepository.findAll(pageable);
-        List<Product> products = page.getContent();
+        List<Product> products = productRepository.findTop6ByProductApprovedIsTrueOrderByIdDesc(pageable);
         if (products.isEmpty()) {
             return Collections.emptyList();
         }

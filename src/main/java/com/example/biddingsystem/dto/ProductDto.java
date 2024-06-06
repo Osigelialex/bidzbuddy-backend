@@ -17,5 +17,7 @@ public class ProductDto {
     private Long currentBid;
     private boolean biddingClosed;
     private Long remainingTime;
+    private boolean paid;
+    private boolean productApproved;
     private String productImageUrl;
 }

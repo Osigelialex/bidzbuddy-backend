@@ -1,14 +1,12 @@
 package com.example.biddingsystem.models;
 
 import com.example.biddingsystem.enums.Condition;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 
 import java.util.Calendar;
 import java.util.Date;
@@ -40,9 +38,9 @@ public class Product {
     private Condition condition;
     private Long minimumBid;
     private Long currentBid;
-
+    private boolean paid;
     private boolean isBiddingClosed;
-
+    private boolean productApproved;
     private Date endTime = setEndTime();
 
     @OneToOne(fetch = FetchType.LAZY)

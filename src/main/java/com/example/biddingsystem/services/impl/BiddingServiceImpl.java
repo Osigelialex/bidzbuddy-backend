@@ -3,6 +3,7 @@ package com.example.biddingsystem.services.impl;
 import com.example.biddingsystem.dto.BidDto;
 import com.example.biddingsystem.dto.BidListDto;
 import com.example.biddingsystem.dto.UserBidsDto;
+import com.example.biddingsystem.dto.WinningBidsDto;
 import com.example.biddingsystem.exceptions.ResourceNotFoundException;
 import com.example.biddingsystem.exceptions.ValidationException;
 import com.example.biddingsystem.models.Bid;
@@ -40,11 +41,19 @@ public class BiddingServiceImpl implements BiddingService {
     private final NotificationService notificationService;
     
     @Override
-    public List<UserBidsDto> getUserBids() {
-        List<Bid> userBids = biddingRepository.findBidsByBidderId(securityUtils.getCurrentUser().getId());
+    public List<UserBidsDto> getUserBids(Boolean winningBids) {
+        List<Bid> userBids;
+
+        if (winningBids) {
+            userBids = biddingRepository.findByBidderUsernameAndIsWinningBidTrue(securityUtils.getCurrentUser().getUsername());
+        } else {
+            userBids = biddingRepository.findByBidderUsernameAndIsWinningBidFalse(securityUtils.getCurrentUser().getUsername());
+        }
+
         if (userBids.isEmpty()) {
             return Collections.emptyList();
         }
+
         return userBids.stream().map(bid -> modelMapper.map(bid, UserBidsDto.class)).collect(Collectors.toList());
     }
 

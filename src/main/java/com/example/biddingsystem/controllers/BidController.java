@@ -20,8 +20,10 @@ public class BidController {
     private BiddingService biddingService;
 
     @GetMapping
-    public ResponseEntity<List<UserBidsDto>> getUserBids() {
-        return ResponseEntity.ok(biddingService.getUserBids());
+    public ResponseEntity<List<UserBidsDto>> getUserBids(
+            @RequestParam(required = false) Boolean winningBids
+    ) {
+        return ResponseEntity.ok(biddingService.getUserBids(winningBids != null ? winningBids : false));
     }
 
     @GetMapping("/recent")

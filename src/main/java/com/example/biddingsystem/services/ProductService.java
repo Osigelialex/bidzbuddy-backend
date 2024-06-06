@@ -12,6 +12,8 @@ import java.util.List;
 public interface ProductService {
     List<ProductDto> getProductsBySeller();
     List<DashboardProductsDto> getProductsForDashboard();
+    void approveProduct(Long productId);
+    List<DashboardProductsDto> getUnapprovedProducts();
     void closeAuctionForProduct(Long productId);
     void reopenAuctionForProduct(Long productId);
     List<ProductDto> getAllProducts(Long categoryId, String condition, Double minimumBid);

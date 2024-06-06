@@ -12,8 +12,10 @@ public class DashboardProductsDto {
     private String name;
     private String categoryName;
     private String condition;
+    private String description;
     private Long minimumBid;
     private Long currentBid;
+    private boolean productApproved;
     private boolean isBiddingClosed;
     private String productImageUrl;
 }
