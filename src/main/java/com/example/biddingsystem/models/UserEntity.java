@@ -28,6 +28,7 @@ public class UserEntity implements UserDetails {
     private String email;
     private String username;
     private String password;
+    private Boolean isEnabled = false;
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
@@ -55,6 +56,6 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
 }

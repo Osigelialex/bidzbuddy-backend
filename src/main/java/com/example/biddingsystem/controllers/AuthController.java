@@ -2,7 +2,6 @@ package com.example.biddingsystem.controllers;
 
 import com.example.biddingsystem.dto.*;
 import com.example.biddingsystem.services.AuthenticationService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,12 +14,20 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class AuthController {
     private AuthenticationService authenticationService;
-    private HttpServletResponse response;
 
     @PostMapping("/signup")
     public ResponseEntity<String> register(@RequestBody @Valid RegisterDto registerDto) {
-        authenticationService.register(registerDto);
-        return new ResponseEntity<>("User signed up successfully", HttpStatus.OK);
+        return new ResponseEntity<>(authenticationService.register(registerDto), HttpStatus.OK);
+    }
+
+    @PostMapping("/resend")
+    public ResponseEntity<String> resendVerificationEmail(@RequestParam String email) {
+        return new ResponseEntity<>(authenticationService.resendVerificationEmail(email), HttpStatus.OK);
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyAccount(@RequestParam String token) {
+        return new ResponseEntity<>(authenticationService.verifyAccount(token), HttpStatus.OK);
     }
 
     @PostMapping("/login")
