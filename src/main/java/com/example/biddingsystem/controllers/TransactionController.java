@@ -1,10 +1,13 @@
 package com.example.biddingsystem.controllers;
 
 import com.example.biddingsystem.dto.TransactionCreationDto;
+import com.example.biddingsystem.dto.TransactionDto;
 import com.example.biddingsystem.services.TransactionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/transactions")
@@ -18,5 +21,10 @@ public class TransactionController {
     public ResponseEntity<String> createTransaction(@RequestBody TransactionCreationDto transactionCreationDto) {
         transactionService.createTransaction(transactionCreationDto);
         return ResponseEntity.ok("Transaction created successfully");
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TransactionDto>> getTransactions() {
+        return ResponseEntity.ok(transactionService.getTransactions());
     }
 }

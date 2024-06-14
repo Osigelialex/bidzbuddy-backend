@@ -39,6 +39,12 @@ public class ProductController {
         return new ResponseEntity<>("Product approved successfully", HttpStatus.OK);
     }
 
+    @PatchMapping("/reject/{productId}")
+    public ResponseEntity<String> rejectProduct(@PathVariable("productId") Long productId) {
+        productService.rejectProduct(productId);
+        return new ResponseEntity<>("Product rejected successfully", HttpStatus.OK);
+    }
+
     @GetMapping("/unapproved")
     public ResponseEntity<List<DashboardProductsDto>> getUnapprovedProducts() {
         return new ResponseEntity<>(productService.getUnapprovedProducts(), HttpStatus.OK);

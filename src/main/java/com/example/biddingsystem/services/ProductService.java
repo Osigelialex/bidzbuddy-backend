@@ -13,6 +13,7 @@ public interface ProductService {
     List<ProductDto> getProductsBySeller();
     List<DashboardProductsDto> getProductsForDashboard();
     void approveProduct(Long productId);
+    void rejectProduct(Long productId);
     List<DashboardProductsDto> getUnapprovedProducts();
     void closeAuctionForProduct(Long productId);
     void reopenAuctionForProduct(Long productId);

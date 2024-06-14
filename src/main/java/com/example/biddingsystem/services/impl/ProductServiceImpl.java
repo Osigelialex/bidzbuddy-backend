@@ -15,6 +15,7 @@ import com.example.biddingsystem.models.UserEntity;
 import com.example.biddingsystem.repositories.CategoryRepository;
 import com.example.biddingsystem.repositories.ProductRepository;
 import com.example.biddingsystem.repositories.UserRepository;
+import com.example.biddingsystem.services.EmailService;
 import com.example.biddingsystem.services.NotificationService;
 import com.example.biddingsystem.services.ProductService;
 import com.example.biddingsystem.utils.SecurityUtils;
@@ -42,6 +43,7 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final SecurityUtils securityUtils;
     private final NotificationService notificationService;
+    private final EmailService emailService;
 
     @Override
     public List<ProductDto> getProductsBySeller() {
@@ -77,11 +79,52 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = productOptional.get();
         product.setProductApproved(true);
+        product.setEndTime();
         productRepository.save(product);
+
+        // notify seller that product has been approved via email
+        emailService.sendEmail(
+                product.getSeller().getEmail(),
+                "Your Product Has Been Approved!",
+                "Dear " + product.getSeller().getUsername() + ",\n\n" +
+                        "Great news! Your product, " + product.getName() + ", has successfully passed our approval process and is now live on our platform!.\n\n" +
+                        "Thank you for choosing our platform to showcase your product. If you have any questions or need further assistance, feel free to reach out to our support team.\n\n" +
+                        "Best regards,\n" +
+                        "The BidzBuddy Team"
+        );
+
 
         // notify seller that product has been approved
         notificationService.sendNotification(
                 "The wait is over! " + product.getName() + " has been approved",
+                product.getSeller().getId()
+        );
+    }
+
+    @Override
+    public void rejectProduct(Long productId) {
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            throw new ResourceNotFoundException("Product not found");
+        }
+
+        Product product = productOptional.get();
+        productRepository.delete(product);
+
+        // notify seller that product has been rejected via email
+        emailService.sendEmail(
+                product.getSeller().getEmail(),
+                "Your Product Has Been Rejected",
+                "Dear " + product.getSeller().getUsername() + ",\n\n" +
+                        "We regret to inform you that your product, " + product.getName() + ", has been rejected due to not meeting our platform's guidelines.\n\n" +
+                        "If you have any questions or need further assistance, feel free to reach out to our support team.\n\n" +
+                        "Best regards,\n" +
+                        "The BidzBuddy Team"
+        );
+
+        // notify seller that product has been rejected
+        notificationService.sendNotification(
+                "We regret to inform you that " + product.getName() + " has been rejected",
                 product.getSeller().getId()
         );
     }
@@ -240,6 +283,7 @@ public class ProductServiceImpl implements ProductService {
         newProduct.setCondition(Condition.valueOf(product.getCondition()));
         newProduct.setMinimumBid(product.getMinimumBid());
         newProduct.setCurrentBid(product.getMinimumBid());
+        newProduct.setDuration(product.getDuration());
         newProduct.setCategory(category.get());
         newProduct.setProductImageUrl(uploadedImageUrl);
 

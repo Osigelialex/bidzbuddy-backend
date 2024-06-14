@@ -33,6 +33,7 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+    private int duration;
 
     @Enumerated(value = EnumType.STRING)
     private Condition condition;
@@ -41,7 +42,7 @@ public class Product {
     private boolean paid;
     private boolean isBiddingClosed;
     private boolean productApproved;
-    private Date endTime = setEndTime();
+    private Date endTime = new Date();
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "winning_bidder_id")
@@ -53,10 +54,10 @@ public class Product {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<Bid> bidList;
 
-    public Date setEndTime() {
+    public void setEndTime() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, 5);
-        return calendar.getTime();
+        calendar.add(Calendar.DATE, duration);
+        this.endTime = calendar.getTime();
     }
 
     public long getRemainingTime() {

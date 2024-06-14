@@ -29,6 +29,10 @@ public class ProductCreationDto {
     @NotBlank(message = "Product condition cannot be blank")
     private String condition;
 
+    @NotNull(message = "Product duration cannot be null")
+    @Min(value = 1, message = "Product duration cannot be less than 1")
+    private int duration;
+
     @NotNull(message = "Product minimum bid cannot be null")
     @Min(value = 5000, message = "Product minimum bid cannot be less than 5000")
     private Long minimumBid;

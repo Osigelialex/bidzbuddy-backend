@@ -28,6 +28,7 @@ public class UserEntity implements UserDetails {
     private String email;
     private String username;
     private String password;
+    private LocalDateTime lastLogin = LocalDateTime.now();
     private Boolean isEnabled = false;
     private LocalDateTime createdAt = LocalDateTime.now();
 

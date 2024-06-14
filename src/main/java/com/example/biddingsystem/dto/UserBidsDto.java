@@ -14,6 +14,7 @@ public class UserBidsDto {
     private Long productId;
     private String productImageUrl;
     private String productName;
+    private Boolean productBiddingClosed;
     private Long bidAmount;
     private Boolean isWinningBid;
     private Date timestamp;

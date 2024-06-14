@@ -143,6 +143,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     )
             );
 
+            // update last login timestamp
+            user.setLastLogin(LocalDateTime.now());
+            userRepository.save(user);
             String token = jwtService.generateToken(user);
             return new LoginResponseDto(token, modelMapper.map(user, UserDto.class));
         } catch (AuthenticationException e) {

@@ -19,7 +19,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "SELECT p FROM Product p WHERE p.productApproved = true ORDER BY p.id DESC")
     List<Product> findAll();
 
-    @Query(value = "SELECT p FROM Product p WHERE p.productApproved = true ORDER BY p.id DESC")
+    @Query(value = "SELECT p FROM Product p WHERE p.productApproved = true AND p.isBiddingClosed = false ORDER BY p.id DESC")
     List<Product> findTop6ByProductApprovedIsTrueOrderByIdDesc(Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE p.productApproved = false")
