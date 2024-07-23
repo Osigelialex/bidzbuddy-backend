@@ -13,7 +13,7 @@ public class TransactionDto {
     private Long transactionId;
     private String productId;
     private Long amount;
-    private String paystackReference;
+    private String paymentStatus;
     private String userId;
     private Date timestamp;
 }

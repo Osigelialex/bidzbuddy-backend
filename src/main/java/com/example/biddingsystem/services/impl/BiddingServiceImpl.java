@@ -12,6 +12,7 @@ import com.example.biddingsystem.models.UserEntity;
 import com.example.biddingsystem.repositories.BiddingRepository;
 import com.example.biddingsystem.repositories.ProductRepository;
 import com.example.biddingsystem.services.BiddingService;
+import com.example.biddingsystem.services.EmailService;
 import com.example.biddingsystem.services.NotificationService;
 import com.example.biddingsystem.utils.SecurityUtils;
 import jakarta.transaction.Transactional;
@@ -36,6 +37,7 @@ public class BiddingServiceImpl implements BiddingService {
 
     private final BiddingRepository biddingRepository;
     private final ProductRepository productRepository;
+    private final EmailService emailService;
     private final SecurityUtils securityUtils;
     private final ModelMapper modelMapper;
     private final NotificationService notificationService;
@@ -216,6 +218,10 @@ public class BiddingServiceImpl implements BiddingService {
         biddingRepository.save(winningBid);
 
         notificationService.sendNotification("🎉 Congratulations! You have won " + product.getName(), winner.getId());
+
+        // notify user via email that they won the bid
+        emailService.sendEmail(winner.getEmail(), "Congratulations! You have won the bid",
+                "You have won the bid on " + product.getName() + " with a bid amount of " + winningBid.getBidAmount() + " go check it out!");
 
         List<Bid> losingBids = biddingRepository.findByProductIdAndIsWinningBidFalseAndBidderNot(productId, winner);
 

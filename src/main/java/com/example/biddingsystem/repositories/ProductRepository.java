@@ -37,7 +37,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE p.minimumBid >= :minimumBid AND p.productApproved = true")
     List<Product> findProductsByMinimumBid(Double minimumBid);
 
-    @Query("SELECT p FROM Product p WHERE p.productApproved = true AND p.name LIKE %:productName%")
+    @Query("SELECT p FROM Product p WHERE p.productApproved = true AND LOWER(p.name) LIKE LOWER(CONCAT('%', :productName, '%'))")
     List<Product> findByNameIsContainingIgnoreCase(@Param("productName") String productName);
 
     @Query("SELECT p FROM Product p WHERE p.condition = :condition AND p.category.id = :categoryId AND p.productApproved = true")

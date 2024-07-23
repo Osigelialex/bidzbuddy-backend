@@ -32,6 +32,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req->req
+                        .requestMatchers(HttpMethod.GET, "/ping").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/signup").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/unprotected").permitAll()
@@ -65,6 +66,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/reviews")
                         .hasAnyAuthority("SELLER", "BUYER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/reviews").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/paystack/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsServiceImpl)

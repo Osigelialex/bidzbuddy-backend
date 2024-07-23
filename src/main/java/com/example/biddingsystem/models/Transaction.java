@@ -1,9 +1,7 @@
 package com.example.biddingsystem.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.biddingsystem.enums.PaymentStatus;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +20,8 @@ public class Transaction {
     private Long userId;
     private Long productId;
     private Long amount;
-    private String paystackReference;
+
+    @Enumerated(value = EnumType.STRING)
+    private PaymentStatus paymentStatus;
     private Date timestamp = new Date();
 }

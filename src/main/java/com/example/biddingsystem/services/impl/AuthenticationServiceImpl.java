@@ -128,6 +128,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    public void changePassword(String oldPassword, String newPassword) {
+        UserEntity user = securityUtils.getCurrentUser();
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new UnauthorizedException("Invalid old password");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    @Override
     public LoginResponseDto login(LoginDto loginDto) {
         try {
             UserEntity user = userRepository.findByUsernameOrEmail(loginDto.getUsername(), loginDto.getUsername()).orElseThrow();

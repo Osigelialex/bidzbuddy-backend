@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
@@ -16,6 +18,8 @@ import java.util.Map;
 
 @Component
 public class AuthenticationPoint implements AuthenticationEntryPoint {
+    Logger logger = LoggerFactory.getLogger(AuthenticationPoint.class);
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
@@ -27,6 +31,7 @@ public class AuthenticationPoint implements AuthenticationEntryPoint {
         } else if (authException instanceof DisabledException) {
             message = "Account has expired";
         } else {
+            logger.error(authException.getMessage());
             message = "Authentication failed";
         }
         responseBody.put("message", message);

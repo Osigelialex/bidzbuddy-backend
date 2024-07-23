@@ -36,6 +36,12 @@ public class AuthController {
         return new ResponseEntity<>(loginResponseDto, HttpStatus.OK);
     }
 
+    @PatchMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@RequestBody @Valid ChangePasswordDto changePasswordDto) {
+        authenticationService.changePassword(changePasswordDto.getOldPassword(), changePasswordDto.getNewPassword());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/me")
     public ResponseEntity<UserDto> getAuthenticatedUser() {
         UserDto userDto = authenticationService.getAuthenticatedUser();

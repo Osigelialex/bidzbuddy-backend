@@ -17,12 +17,6 @@ public class TransactionController {
 
     private TransactionService transactionService;
 
-    @PostMapping
-    public ResponseEntity<String> createTransaction(@RequestBody TransactionCreationDto transactionCreationDto) {
-        transactionService.createTransaction(transactionCreationDto);
-        return ResponseEntity.ok("Transaction created successfully");
-    }
-
     @GetMapping
     public ResponseEntity<List<TransactionDto>> getTransactions() {
         return ResponseEntity.ok(transactionService.getTransactions());

@@ -9,6 +9,7 @@ public interface AuthenticationService {
     String register(RegisterDto registerDto);
     String verifyAccount(String token);
     String resendVerificationEmail(String email);
+    void changePassword(String oldPassword, String newPassword);
     LoginResponseDto login(LoginDto loginDto);
     UserDto getAuthenticatedUser();
 }
