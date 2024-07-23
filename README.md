@@ -6,9 +6,10 @@ This repository contains the backend implementation of the Online Auctioning Sys
 
 - [Features](#features)
 - [Installation](#installation)
-- [Configuration](#configuration)
-- [API Documentation](#api-documentation)
 - [Technologies Used](#technologies-used)
+
+## Frontend Repository
+The frontend repository for bidzbuddy can be found [bidzbuddy frontend](https://github.com/Osigelialex/bidzbuddy-frontend)
 
 ## Features
 
