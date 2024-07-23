@@ -2,7 +2,6 @@ package com.example.biddingsystem.controllers;
 
 import com.example.biddingsystem.dto.CreateReviewDto;
 import com.example.biddingsystem.dto.ReviewResponseDto;
-import com.example.biddingsystem.models.Review;
 import com.example.biddingsystem.services.ReviewService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

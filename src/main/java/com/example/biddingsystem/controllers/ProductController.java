@@ -4,7 +4,6 @@ import com.example.biddingsystem.dto.DashboardProductsDto;
 import com.example.biddingsystem.dto.LandingPageProductDto;
 import com.example.biddingsystem.dto.ProductCreationDto;
 import com.example.biddingsystem.dto.ProductDto;
-import com.example.biddingsystem.models.Product;
 import com.example.biddingsystem.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
