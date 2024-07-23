@@ -1,9 +1,6 @@
 package com.example.biddingsystem.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,7 +27,7 @@ public class RegisterDto {
 
     @NotNull(message = "password must be provided")
     @NotBlank(message = "password cannot be empty")
-    @Min(value = 6, message = "password must be at least 6 characters")
+    @Size(min = 6, message = "password must be at least 6 characters")
     private String password;
 
     @NotNull(message = "role must be provided")
