@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(value = "http://localhost:5173")
 @AllArgsConstructor
 public class AuthController {
     private AuthenticationService authenticationService;

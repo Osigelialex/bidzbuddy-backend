@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/sendmail")
-@CrossOrigin(origins = "http://localhost:5173")
 public class EmailController {
 
     private final EmailService emailService;
