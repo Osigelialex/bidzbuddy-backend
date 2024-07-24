@@ -27,7 +27,9 @@ public class RegisterDto {
 
     @NotNull(message = "password must be provided")
     @NotBlank(message = "password cannot be empty")
-    @Size(min = 6, message = "password must be at least 6 characters")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$",
+            message = "Password should contain at least one digit, one lowercase letter, " +
+                    "one uppercase letter, should be at least 8 characters long and should not contain any whitespace")
     private String password;
 
     @NotNull(message = "role must be provided")
