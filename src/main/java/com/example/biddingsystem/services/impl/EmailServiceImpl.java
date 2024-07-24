@@ -85,7 +85,7 @@ public class EmailServiceImpl implements EmailService {
                 "<p style=\"color: #333; font-size: 16px;\">Welcome to BidzBuddy!" +
                 ",</p>" +
                 "<p style=\"color: #333; font-size: 16px; line-height: 1.5;\">Thank you for registering with BidzBuddy.</p>" +
-                "<p style=\"color: #333; font-size: 16px; line-height: 1.5;\">Please confirm your email address by clicking this link: <a href=\"http://localhost:5173/email-verification?token=" +
+                "<p style=\"color: #333; font-size: 16px; line-height: 1.5;\">Please confirm your email address by clicking this link: <a href=\"https://bidzbuddy.netlify.app/email-verification?token=" +
                 confirmationToken +
                 "\">Confirm Email</a></p>" +
                 "<p style=\"color: #333; font-size: 16px; line-height: 1.5;\">This link will expire in 15 minutes.</p>" +
