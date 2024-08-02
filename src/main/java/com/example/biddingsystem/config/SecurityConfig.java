@@ -85,7 +85,7 @@ public class SecurityConfig {
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
-                        .allowedOrigins("https://bidzbuddy.netlify.app", "*")
+                        .allowedOrigins("https://bidzbuddy.vercel.app")
                         .allowedHeaders("*");
             }
         };
