@@ -2,6 +2,8 @@ package com.example.biddingsystem.controllers;
 
 import com.example.biddingsystem.dto.*;
 import com.example.biddingsystem.services.AuthenticationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/auth")
 @AllArgsConstructor
+@Tag(name = "Authentication", description = "Authentication functionalities")
 public class AuthController {
     private AuthenticationService authenticationService;
 
@@ -36,12 +39,14 @@ public class AuthController {
     }
 
     @PatchMapping("/change-password")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Void> changePassword(@RequestBody @Valid ChangePasswordDto changePasswordDto) {
         authenticationService.changePassword(changePasswordDto.getOldPassword(), changePasswordDto.getNewPassword());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/me")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<UserDto> getAuthenticatedUser() {
         UserDto userDto = authenticationService.getAuthenticatedUser();
         return new ResponseEntity<>(userDto, HttpStatus.OK);

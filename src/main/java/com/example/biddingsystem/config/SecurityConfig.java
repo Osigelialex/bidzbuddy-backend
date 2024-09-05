@@ -3,6 +3,8 @@ package com.example.biddingsystem.config;
 import com.example.biddingsystem.security.AuthenticationPoint;
 import com.example.biddingsystem.security.JwtAuthenticationFilter;
 import com.example.biddingsystem.security.UserDetailsServiceImpl;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -24,6 +26,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Controller
 @EnableWebSecurity
 @AllArgsConstructor
+@SecurityScheme(
+        name = "Bearer Authentication",
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        scheme = "bearer"
+)
 public class SecurityConfig {
 
     private UserDetailsServiceImpl userDetailsServiceImpl;
@@ -70,6 +78,7 @@ public class SecurityConfig {
                         .hasAnyAuthority("SELLER", "BUYER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/reviews").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/paystack/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsServiceImpl)
@@ -85,7 +94,7 @@ public class SecurityConfig {
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
-                        .allowedOrigins("https://bidzbuddy.vercel.app")
+                        .allowedOrigins("https://bidzbuddy.vercel.app", "*")
                         .allowedHeaders("*");
             }
         };

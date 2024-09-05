@@ -5,6 +5,8 @@ import com.example.biddingsystem.dto.LandingPageProductDto;
 import com.example.biddingsystem.dto.ProductCreationDto;
 import com.example.biddingsystem.dto.ProductDto;
 import com.example.biddingsystem.services.ProductService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/products")
 @AllArgsConstructor
+@Tag(name = "Products")
 public class ProductController {
     private ProductService productService;
 
@@ -32,50 +35,59 @@ public class ProductController {
     }
 
     @PatchMapping("/approve/{productId}")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<String> approveProduct(@PathVariable("productId") Long productId) {
         productService.approveProduct(productId);
         return new ResponseEntity<>("Product approved successfully", HttpStatus.OK);
     }
 
     @PatchMapping("/reject/{productId}")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<String> rejectProduct(@PathVariable("productId") Long productId) {
         productService.rejectProduct(productId);
         return new ResponseEntity<>("Product rejected successfully", HttpStatus.OK);
     }
 
     @GetMapping("/unapproved")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<List<DashboardProductsDto>> getUnapprovedProducts() {
         return new ResponseEntity<>(productService.getUnapprovedProducts(), HttpStatus.OK);
     }
 
     @GetMapping("/user")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<List<ProductDto>> getProductsBySeller() {
         return new ResponseEntity<>(productService.getProductsBySeller(), HttpStatus.OK);
     }
 
     @GetMapping("/dashboard")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<List<DashboardProductsDto>> getProductsForDashboard() {
         return new ResponseEntity<>(productService.getProductsForDashboard(), HttpStatus.OK);
     }
 
     @PatchMapping("/close/{productId}")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<String> closeAuctionForProduct(@PathVariable("productId") Long productId) {
         productService.closeAuctionForProduct(productId);
         return new ResponseEntity<>("Auction closed successfully", HttpStatus.OK);
     }
 
     @PatchMapping("/reopen/{productId}")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<String> reopenAuctionForProduct(@PathVariable("productId") Long productId) {
         productService.reopenAuctionForProduct(productId);
         return new ResponseEntity<>("Auction reopened successfully", HttpStatus.OK);
     }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ProductDto> createProduct(@ModelAttribute @Valid ProductCreationDto product) throws IOException {
         return new ResponseEntity<>(productService.createProduct(product), HttpStatus.CREATED);
     }
 
     @GetMapping("/unprotected")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<List<LandingPageProductDto>> getLandingPageProducts() {
         return new ResponseEntity<>(productService.getLandingPageProducts(), HttpStatus.OK);
     }
@@ -86,6 +98,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ProductDto> deleteProduct(@PathVariable("id") Long id) {
         productService.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

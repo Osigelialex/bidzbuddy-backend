@@ -3,6 +3,8 @@ package com.example.biddingsystem.controllers;
 import com.example.biddingsystem.dto.PaymentDto;
 import com.example.biddingsystem.services.PaystackService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,10 +20,12 @@ import java.security.NoSuchAlgorithmException;
 @RequestMapping("/api/v1/paystack")
 @CrossOrigin(origins = "*")
 @AllArgsConstructor
+@Tag(name = "Paystack")
 public class PaystackController {
     private final PaystackService paystackService;
 
     @PostMapping
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<String> initiatePayment(@RequestBody PaymentDto paymentDto) {
         String authorizationUrl = paystackService.initiatePayment(paymentDto);
         return new ResponseEntity<>(authorizationUrl, HttpStatus.OK);
